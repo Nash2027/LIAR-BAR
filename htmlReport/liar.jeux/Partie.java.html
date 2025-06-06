@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Partie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">All in LIARS BAR Coverage Results</a> &gt; <a href="index.source.html" class="el_package">liar.jeux</a> &gt; <span class="el_source">Partie.java</span></div><h1>Partie.java</h1><pre class="source lang-java linenums">package liar.jeux;
+
+import liar.Joueur;
+import java.util.*;
+
+public class Partie {
+    private List&lt;Joueur&gt; joueurs;
+    private Stack&lt;Carte&gt; pioche;
+    private List&lt;Carte&gt; pileCentre;
+    private Carte.TypeCarte valeurDemandee;
+
+<span class="fc" id="L12">    public Partie(List&lt;Joueur&gt; joueurs, Carte.TypeCarte valeurDemandeeInitiale) {</span>
+<span class="fc" id="L13">        this.joueurs = new ArrayList&lt;&gt;(joueurs); // copie de la liste pour éviter les effets de bord</span>
+<span class="fc" id="L14">        this.valeurDemandee = choisirValeurAleatoire(); // aléatoire dès le début</span>
+<span class="fc" id="L15">        this.pileCentre = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L16">        creerPioche();</span>
+<span class="fc" id="L17">        distribuerCartes();</span>
+<span class="fc" id="L18">    }</span>
+
+    private Carte.TypeCarte choisirValeurAleatoire() {
+<span class="fc" id="L21">        Carte.TypeCarte[] valeurs = Carte.TypeCarte.values();</span>
+<span class="fc" id="L22">        return valeurs[new Random().nextInt(valeurs.length)];</span>
+    }
+
+    private void creerPioche() {
+<span class="fc" id="L26">        pioche = new Stack&lt;&gt;();</span>
+<span class="fc" id="L27">        List&lt;Carte&gt; toutesCartes = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for (Carte.TypeCarte type : Carte.TypeCarte.values()) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">            for (int i = 0; i &lt; 4; i++) {</span>
+<span class="fc" id="L30">                toutesCartes.add(new Carte(type));</span>
+            }
+        }
+<span class="fc" id="L33">        Collections.shuffle(toutesCartes);</span>
+<span class="fc" id="L34">        pioche.addAll(toutesCartes);</span>
+<span class="fc" id="L35">    }</span>
+
+    private void distribuerCartes() {
+<span class="fc" id="L38">        int index = 0;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        while (!pioche.isEmpty()) {</span>
+<span class="fc" id="L40">            Carte carte = pioche.pop();</span>
+<span class="fc" id="L41">            joueurs.get(index).ajouterCarte(carte);</span>
+<span class="fc" id="L42">            index = (index + 1) % joueurs.size();</span>
+<span class="fc" id="L43">        }</span>
+<span class="fc" id="L44">    }</span>
+
+    public void demarrer(Scanner scanner) {
+<span class="fc" id="L47">        int tour = 0;</span>
+
+
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        while (nombreJoueursVivants() &gt; 1) {</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if (joueurs.stream().allMatch(j -&gt; j.getCartes().isEmpty())) {</span>
+<span class="fc" id="L53">                System.out.println(&quot;Match nul : tous les joueurs n'ont plus de cartes !&quot;);</span>
+<span class="fc" id="L54">                break;</span>
+            }
+
+<span class="nc" id="L57">            Joueur joueurActuel = prochainJoueur(tour);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (!joueurActuel.estVivant()) {</span>
+<span class="nc" id="L59">                tour++;</span>
+<span class="nc" id="L60">                continue;</span>
+            }
+
+<span class="nc" id="L63">            valeurDemandee = choisirValeurAleatoire();</span>
+
+<span class="nc" id="L65">            System.out.println(&quot;\nTour de &quot; + joueurActuel.getNom());</span>
+<span class="nc" id="L66">            System.out.println(&quot;Carte demandée : &quot; + valeurDemandee);</span>
+
+<span class="nc" id="L68">            Carte carteJouee = joueurActuel.jouerCarte(valeurDemandee);</span>
+<span class="nc" id="L69">            pileCentre.add(carteJouee);</span>
+
+<span class="nc" id="L71">            System.out.println(joueurActuel.getNom() + &quot; pose une carte en annonçant : &quot; + valeurDemandee);</span>
+
+<span class="nc" id="L73">            boolean accusationEffectuee = false;</span>
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            for (Joueur adversaire : joueurs) {</span>
+<span class="nc bnc" id="L76" title="All 4 branches missed.">                if (adversaire != joueurActuel &amp;&amp; adversaire.estVivant()) {</span>
+                    boolean accuse;
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                    if (adversaire.getClass().getSimpleName().equals(&quot;JoueurBot&quot;)) {</span>
+<span class="nc" id="L80">                        accuse = new Random().nextBoolean();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                        System.out.println(adversaire.getNom() + &quot; a &quot; + (accuse ? &quot;accusé un bluff.&quot; : &quot;décidé de ne rien dire.&quot;));</span>
+                    } else {
+<span class="nc" id="L83">                        System.out.print(adversaire.getNom() + &quot;, voulez-vous accuser un bluff ? (true/false) : &quot;);</span>
+<span class="nc" id="L84">                        accuse = scanner.nextBoolean();</span>
+                    }
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                    if (accuse) {</span>
+<span class="nc" id="L88">                        accusationEffectuee = true;</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                        if (carteJouee.getType() != valeurDemandee) {</span>
+<span class="nc" id="L90">                            System.out.println(&quot;Bluff attrapé !&quot;);</span>
+<span class="nc" id="L91">                            joueurActuel.perdreVie();</span>
+                        } else {
+<span class="nc" id="L93">                            System.out.println(&quot;Fausse accusation !&quot;);</span>
+<span class="nc" id="L94">                            adversaire.perdreVie();</span>
+                        }
+<span class="nc" id="L96">                        break;</span>
+                    }
+                }
+<span class="nc" id="L99">            }</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (!accusationEffectuee) {</span>
+<span class="nc" id="L102">                System.out.println(&quot;Aucune accusation. Le jeu continue.&quot;);</span>
+            }
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            joueurs.removeIf(j -&gt; !j.estVivant());</span>
+
+<span class="nc" id="L107">            tour++;</span>
+<span class="nc" id="L108">        }</span>
+
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (nombreJoueursVivants() == 1) {</span>
+<span class="nc" id="L111">            Joueur gagnant = joueurs.stream().filter(Joueur::estVivant).findFirst().get();</span>
+<span class="nc" id="L112">            System.out.println(&quot;\n🎉 Le gagnant est &quot; + gagnant.getNom() + &quot; !&quot;);</span>
+<span class="nc" id="L113">        } else {</span>
+<span class="fc" id="L114">            System.out.println(&quot;Plus de joueurs vivants. Fin de partie.&quot;);</span>
+        }
+<span class="fc" id="L116">    }</span>
+
+
+    public int nombreJoueursVivants() {
+<span class="fc" id="L120">        int vivants = 0;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        for (Joueur j : joueurs) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (j.estVivant()) vivants++;</span>
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">        return vivants;</span>
+    }
+
+    public Joueur prochainJoueur(int tour) {
+<span class="fc" id="L128">        return joueurs.get(tour % joueurs.size());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

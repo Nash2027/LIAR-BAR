@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartieTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">All in LIARS BAR Coverage Results</a> &gt; <a href="index.source.html" class="el_package">liar.jeux</a> &gt; <span class="el_source">PartieTest.java</span></div><h1>PartieTest.java</h1><pre class="source lang-java linenums">package liar.jeux;
+
+import liar.Joueur;
+import liar.people.JoueurHumain;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L12">class PartieTest {</span>
+
+    static class CarteAuto extends Joueur {
+        private Queue&lt;Carte&gt; cartesAJouer;
+        private boolean bluffer;
+        private boolean accuser;
+        private boolean vivant;
+
+        public CarteAuto(String nom, List&lt;Carte&gt; main, boolean bluffer, boolean accuser) {
+<span class="fc" id="L21">            super(nom);</span>
+<span class="fc" id="L22">            this.cartesAJouer = new LinkedList&lt;&gt;(main);</span>
+<span class="fc" id="L23">            this.bluffer = bluffer;</span>
+<span class="fc" id="L24">            this.accuser = accuser;</span>
+<span class="fc" id="L25">            this.vivant = true;</span>
+<span class="fc" id="L26">            this.getMain().addAll(main);</span>
+<span class="fc" id="L27">        }</span>
+
+        @Override
+        public Carte jouerCarte(Carte.TypeCarte valeurDemandee) {
+<span class="nc" id="L31">            return cartesAJouer.poll();</span>
+        }
+
+        public void setAccuser(boolean accuser) {
+<span class="nc" id="L35">            this.accuser = accuser;</span>
+<span class="nc" id="L36">        }</span>
+
+        @Override
+        public boolean estVivant() {
+<span class="fc" id="L40">            return vivant;</span>
+        }
+
+        @Override
+        public void perdreVie() {
+<span class="fc" id="L45">            super.perdreVie();</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (getVies() &lt;= 0) vivant = false;</span>
+<span class="fc" id="L47">        }</span>
+
+        public boolean veutAccuser() {
+<span class="nc" id="L50">            return accuser;</span>
+        }
+    }
+
+    private CarteAuto joueur1;
+    private CarteAuto joueur2;
+    private List&lt;Joueur&gt; joueurs;
+    private Partie partie;
+
+    @BeforeEach
+    void setUp() {
+<span class="fc" id="L61">        joueur1 = new CarteAuto(&quot;J1&quot;, new ArrayList&lt;&gt;(), false, false);</span>
+<span class="fc" id="L62">        joueur2 = new CarteAuto(&quot;J2&quot;, new ArrayList&lt;&gt;(), false, false);</span>
+<span class="fc" id="L63">        joueurs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">        joueurs.add(joueur1);</span>
+<span class="fc" id="L65">        joueurs.add(joueur2);</span>
+<span class="fc" id="L66">        partie = new Partie(joueurs, Carte.TypeCarte.DAME);</span>
+<span class="fc" id="L67">    }</span>
+
+    @Test
+    void testPartieAvecAccusationJuste() {
+<span class="fc" id="L71">        CarteAuto j1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.AS)), true, false);</span>
+<span class="fc" id="L72">        CarteAuto j2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, true);</span>
+<span class="fc" id="L73">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.ROI);</span>
+<span class="fc" id="L74">        j1.perdreVie();</span>
+<span class="fc" id="L75">        assertEquals(2, j1.getVies());</span>
+<span class="fc" id="L76">    }</span>
+
+    @Test
+    void testPartieAvecFausseAccusation() {
+<span class="fc" id="L80">        CarteAuto j1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.DAME)), false, false);</span>
+<span class="fc" id="L81">        CarteAuto j2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, true);</span>
+<span class="fc" id="L82">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.DAME);</span>
+<span class="fc" id="L83">        j2.perdreVie();</span>
+<span class="fc" id="L84">        assertEquals(2, j2.getVies());</span>
+<span class="fc" id="L85">    }</span>
+
+    @Test
+    void testFinDePartieSansAccusation() {
+<span class="fc" id="L89">        CarteAuto j1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.AS)), false, false);</span>
+<span class="fc" id="L90">        CarteAuto j2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, false);</span>
+<span class="fc" id="L91">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.DAME);</span>
+<span class="fc" id="L92">        assertNotNull(p);</span>
+<span class="fc" id="L93">    }</span>
+
+    @Test
+    void testDistributionEtPioche() {
+<span class="fc" id="L97">        CarteAuto j1 = new CarteAuto(&quot;J1&quot;, new ArrayList&lt;&gt;(), false, false);</span>
+<span class="fc" id="L98">        CarteAuto j2 = new CarteAuto(&quot;J2&quot;, new ArrayList&lt;&gt;(), false, false);</span>
+<span class="fc" id="L99">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.VALET);</span>
+<span class="fc" id="L100">        int totalCartes = Carte.TypeCarte.values().length * 4;</span>
+<span class="fc" id="L101">        int totalDistribuees = j1.getMain().size() + j2.getMain().size();</span>
+<span class="fc" id="L102">        assertEquals(totalCartes, totalDistribuees);</span>
+<span class="fc" id="L103">    }</span>
+
+    @Test
+    void testSuppressionDesJoueursMorts() {
+<span class="fc" id="L107">        joueur1.perdreVie();</span>
+<span class="fc" id="L108">        joueur1.perdreVie();</span>
+<span class="fc" id="L109">        joueur1.perdreVie(); // Mort</span>
+<span class="fc" id="L110">        assertFalse(joueur1.estVivant());</span>
+<span class="fc" id="L111">        assertTrue(joueur2.estVivant());</span>
+<span class="fc" id="L112">    }</span>
+
+    // 🔽 NOUVEAUX TESTS
+
+    @Test
+    void testNombreJoueursVivants_initial() {
+<span class="fc" id="L118">        assertEquals(2, partie.nombreJoueursVivants());</span>
+<span class="fc" id="L119">    }</span>
+
+    @Test
+    void testNombreJoueursVivants_apresPerte() {
+<span class="fc" id="L123">        joueur1.perdreVie();</span>
+<span class="fc" id="L124">        joueur1.perdreVie();</span>
+<span class="fc" id="L125">        joueur1.perdreVie();</span>
+<span class="fc" id="L126">        assertEquals(1, partie.nombreJoueursVivants());</span>
+<span class="fc" id="L127">    }</span>
+
+    @Test
+    void testProchainJoueur_tour0() {
+<span class="fc" id="L131">        Joueur prochain = partie.prochainJoueur(0);</span>
+<span class="fc" id="L132">        assertEquals(&quot;J1&quot;, prochain.getNom());</span>
+<span class="fc" id="L133">    }</span>
+
+    @Test
+    void testProchainJoueur_tour1() {
+<span class="fc" id="L137">        Joueur prochain = partie.prochainJoueur(1);</span>
+<span class="fc" id="L138">        assertEquals(&quot;J2&quot;, prochain.getNom());</span>
+<span class="fc" id="L139">    }</span>
+
+    @Test
+    void testProchainJoueur_tour2Boucle() {
+<span class="fc" id="L143">        Joueur prochain = partie.prochainJoueur(2);</span>
+<span class="fc" id="L144">        assertEquals(&quot;J1&quot;, prochain.getNom()); // 2 % 2 == 0</span>
+<span class="fc" id="L145">    }</span>
+
+    @Test
+    void testFinPartieMatchNul_siTousLesJoueursNontPlusDeCartes() {
+        // Arrange
+<span class="fc" id="L150">        JoueurHumain j1 = new JoueurHumain(&quot;J1&quot;);</span>
+<span class="fc" id="L151">        JoueurHumain j2 = new JoueurHumain(&quot;J2&quot;);</span>
+
+        // Les deux joueurs n'ont pas de cartes (main vide)
+        // On ne distribue rien, donc pas besoin d'enlever quoi que ce soit
+<span class="fc" id="L155">        Partie partie = new Partie(Arrays.asList(j1, j2), Carte.TypeCarte.AS);</span>
+
+        // On vide manuellement leur main si jamais des cartes sont données par le constructeur
+<span class="fc" id="L158">        j1.getCartes().clear();</span>
+<span class="fc" id="L159">        j2.getCartes().clear();</span>
+
+        // Mock de scanner avec uniquement des &quot;false&quot; (aucune accusation)
+<span class="fc" id="L162">        String input = &quot;false\nfalse\nfalse\nfalse\n&quot;;</span>
+<span class="fc" id="L163">        Scanner scanner = new Scanner(input);</span>
+
+        // Act + Assert
+<span class="fc" id="L166">        assertDoesNotThrow(() -&gt; {</span>
+<span class="fc" id="L167">            partie.demarrer(scanner);</span>
+<span class="fc" id="L168">        });</span>
+<span class="fc" id="L169">    }</span>
+
+    @Test
+    void testConstructeur_initialisePiocheEtDistribueCartes() {
+<span class="fc" id="L173">        JoueurHumain j1 = new JoueurHumain(&quot;Alice&quot;);</span>
+<span class="fc" id="L174">        JoueurHumain j2 = new JoueurHumain(&quot;Bob&quot;);</span>
+<span class="fc" id="L175">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.AS);</span>
+
+        // Chaque joueur doit avoir au moins une carte après distribution
+<span class="fc" id="L178">        assertFalse(j1.getCartes().isEmpty());</span>
+<span class="fc" id="L179">        assertFalse(j2.getCartes().isEmpty());</span>
+<span class="fc" id="L180">    }</span>
+
+    @Test
+    void testCreerPioche_remplitPioche() throws Exception {
+<span class="fc" id="L184">        JoueurHumain j1 = new JoueurHumain(&quot;A&quot;);</span>
+<span class="fc" id="L185">        JoueurHumain j2 = new JoueurHumain(&quot;B&quot;);</span>
+<span class="fc" id="L186">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.AS);</span>
+
+        // Invocation par réflexion de la méthode privée
+<span class="fc" id="L189">        var method = Partie.class.getDeclaredMethod(&quot;creerPioche&quot;);</span>
+<span class="fc" id="L190">        method.setAccessible(true);</span>
+<span class="fc" id="L191">        method.invoke(p);</span>
+
+<span class="fc" id="L193">        var field = Partie.class.getDeclaredField(&quot;pioche&quot;);</span>
+<span class="fc" id="L194">        field.setAccessible(true);</span>
+<span class="fc" id="L195">        Stack&lt;?&gt; pioche = (Stack&lt;?&gt;) field.get(p);</span>
+
+        // La pioche doit contenir 52 cartes (13 valeurs * 4)
+<span class="fc" id="L198">        assertEquals(Carte.TypeCarte.values().length * 4, pioche.size());</span>
+<span class="fc" id="L199">    }</span>
+
+    @Test
+    void testDistribuerCartes_donneCartesAuxJoueurs() throws Exception {
+<span class="fc" id="L203">        JoueurHumain j1 = new JoueurHumain(&quot;A&quot;);</span>
+<span class="fc" id="L204">        JoueurHumain j2 = new JoueurHumain(&quot;B&quot;);</span>
+<span class="fc" id="L205">        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.AS);</span>
+
+<span class="fc" id="L207">        var method = Partie.class.getDeclaredMethod(&quot;distribuerCartes&quot;);</span>
+<span class="fc" id="L208">        method.setAccessible(true);</span>
+<span class="fc" id="L209">        method.invoke(p);</span>
+
+<span class="fc" id="L211">        assertFalse(j1.getCartes().isEmpty());</span>
+<span class="fc" id="L212">        assertFalse(j2.getCartes().isEmpty());</span>
+<span class="fc" id="L213">    }</span>
+
+    @Test
+    void testChoisirValeurAleatoire_valeurNonNulle() throws Exception {
+<span class="fc" id="L217">        Partie p = new Partie(joueurs, Carte.TypeCarte.AS);</span>
+
+<span class="fc" id="L219">        var method = Partie.class.getDeclaredMethod(&quot;choisirValeurAleatoire&quot;);</span>
+<span class="fc" id="L220">        method.setAccessible(true);</span>
+<span class="fc" id="L221">        Carte.TypeCarte val = (Carte.TypeCarte) method.invoke(p);</span>
+
+<span class="fc" id="L223">        assertNotNull(val);</span>
+<span class="fc" id="L224">    }</span>
+
+//    @Test
+//    void testDemarrer_accusationEtFaussesAccusations() {
+//        CarteAuto j1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.DAME)), true, false);
+//        CarteAuto j2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.DAME)), false, true);
+//
+//        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.DAME);
+//
+//        // Génère un nombre suffisant de &quot;false&quot; pour ne pas manquer d'entrée
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i &lt; 40; i++) {
+//            sb.append(&quot;false\n&quot;);
+//            sb.append(&quot;false\n&quot;); // un false par joueur à chaque tour
+//        }
+//        Scanner scanner = new Scanner(sb.toString());
+//
+//        p.demarrer(scanner);
+//
+//        assertEquals(2, j1.getVies()); // bluff attrapé
+//        assertEquals(3, j2.getVies()); // pas de perte
+//    }
+
+
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

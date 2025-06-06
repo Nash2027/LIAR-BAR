@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JoueurTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">liar.people.test</a>
+</div>
+
+<h1>Coverage Summary for Class: JoueurTest (liar.people.test)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JoueurTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (28/28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package liar.people.test;
+&nbsp;
+&nbsp;import liar.jeux.Carte;
+&nbsp;import liar.people.JoueurBot;
+&nbsp;import org.junit.jupiter.api.BeforeEach;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.io.PrintStream;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;public class JoueurTest {</b>
+&nbsp;
+&nbsp;    private JoueurBot joueur;
+&nbsp;
+&nbsp;    @BeforeEach
+&nbsp;    void setUp() {
+<b class="fc">&nbsp;        joueur = new JoueurBot(&quot;BotTest&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testAjouterCarte() {
+<b class="fc">&nbsp;        Carte carte = new Carte(Carte.TypeCarte.AS);</b>
+<b class="fc">&nbsp;        joueur.ajouterCarte(carte);</b>
+<b class="fc">&nbsp;        assertTrue(joueur.getMain().contains(carte));</b>
+<b class="fc">&nbsp;        assertEquals(1, joueur.getMain().size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testPerdreVie_et_getVies() {
+<b class="fc">&nbsp;        assertEquals(3, joueur.getVies());</b>
+&nbsp;
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+<b class="fc">&nbsp;        assertEquals(2, joueur.getVies());</b>
+&nbsp;
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+<b class="fc">&nbsp;        assertEquals(0, joueur.getVies());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testEstVivant() {
+<b class="fc">&nbsp;        assertTrue(joueur.estVivant());</b>
+&nbsp;
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+<b class="fc">&nbsp;        joueur.perdreVie();</b>
+&nbsp;
+<b class="fc">&nbsp;        assertFalse(joueur.estVivant());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testGetNom() {
+<b class="fc">&nbsp;        assertEquals(&quot;BotTest&quot;, joueur.getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testAfficherMain() {
+<b class="fc">&nbsp;        joueur.ajouterCarte(new Carte(Carte.TypeCarte.DAME));</b>
+<b class="fc">&nbsp;        joueur.ajouterCarte(new Carte(Carte.TypeCarte.ROI));</b>
+&nbsp;
+<b class="fc">&nbsp;        ByteArrayOutputStream out = new ByteArrayOutputStream();</b>
+<b class="fc">&nbsp;        System.setOut(new PrintStream(out));</b>
+&nbsp;
+<b class="fc">&nbsp;        joueur.afficherMain();</b>
+&nbsp;
+<b class="fc">&nbsp;        String output = out.toString();</b>
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;Main de BotTest&quot;));</b>
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;0 :&quot;));</b>
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;1 :&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        System.setOut(System.out); // reset stdout</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-03 16:59</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PartieTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">liar.people.test</a>
+</div>
+
+<h1>Coverage Summary for Class: PartieTest (liar.people.test)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PartieTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (32/32)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PartieTest$CarteAuto</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,2%
+  </span>
+  <span class="absValue">
+    (41/44)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package liar.people.test;
+&nbsp;
+&nbsp;import liar.jeux.Carte;
+&nbsp;import liar.jeux.Partie;
+&nbsp;import liar.Joueur;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;class PartieTest {</b>
+&nbsp;
+&nbsp;    static class CarteAuto extends Joueur {
+&nbsp;        private Queue&lt;Carte&gt; cartesAJouer;
+&nbsp;        private boolean bluffer;
+&nbsp;        private boolean accuser;
+&nbsp;        private boolean vivant;
+&nbsp;
+&nbsp;        public CarteAuto(String nom, List&lt;Carte&gt; main, boolean bluffer, boolean accuser) {
+<b class="fc">&nbsp;            super(nom);</b>
+<b class="fc">&nbsp;            this.cartesAJouer = new LinkedList&lt;&gt;(main);</b>
+<b class="fc">&nbsp;            this.bluffer = bluffer;</b>
+<b class="fc">&nbsp;            this.accuser = accuser;</b>
+<b class="fc">&nbsp;            this.vivant = true;</b>
+<b class="fc">&nbsp;            this.getMain().addAll(main); // ajouter manuellement à la main du joueur</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public Carte jouerCarte(Carte.TypeCarte valeurDemandee) {
+<b class="nc">&nbsp;            return cartesAJouer.poll();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setAccuser(boolean accuser) {
+<b class="nc">&nbsp;            this.accuser = accuser;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public boolean estVivant() {
+<b class="fc">&nbsp;            return vivant;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public void perdreVie() {
+<b class="fc">&nbsp;            super.perdreVie();</b>
+<b class="fc">&nbsp;            if (getVies() &lt;= 0) vivant = false;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public boolean veutAccuser() {
+<b class="nc">&nbsp;            return accuser;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testPartieAvecAccusationJuste() {
+<b class="fc">&nbsp;        Carte.TypeCarte demandee = Carte.TypeCarte.ROI;</b>
+&nbsp;
+<b class="fc">&nbsp;        CarteAuto joueur1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.AS)), true, false);</b>
+<b class="fc">&nbsp;        CarteAuto joueur2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, true);</b>
+&nbsp;
+<b class="fc">&nbsp;        Partie partie = new Partie(List.of(joueur1, joueur2), demandee);</b>
+&nbsp;
+&nbsp;        // simule un tour manuel (car `demarrer()` utilise Scanner, donc on isole les tests)
+<b class="fc">&nbsp;        joueur1.perdreVie(); // vérifie perte de vie</b>
+<b class="fc">&nbsp;        assertEquals(2, joueur1.getVies());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testPartieAvecFausseAccusation() {
+<b class="fc">&nbsp;        Carte.TypeCarte demandee = Carte.TypeCarte.DAME;</b>
+&nbsp;
+<b class="fc">&nbsp;        CarteAuto joueur1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.DAME)), false, false);</b>
+<b class="fc">&nbsp;        CarteAuto joueur2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, true);</b>
+&nbsp;
+<b class="fc">&nbsp;        Partie partie = new Partie(List.of(joueur1, joueur2), demandee);</b>
+&nbsp;
+<b class="fc">&nbsp;        joueur2.perdreVie();</b>
+<b class="fc">&nbsp;        assertEquals(2, joueur2.getVies());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testFinDePartieSansAccusation() {
+<b class="fc">&nbsp;        CarteAuto joueur1 = new CarteAuto(&quot;J1&quot;, List.of(new Carte(Carte.TypeCarte.AS)), false, false);</b>
+<b class="fc">&nbsp;        CarteAuto joueur2 = new CarteAuto(&quot;J2&quot;, List.of(new Carte(Carte.TypeCarte.ROI)), false, false);</b>
+&nbsp;
+<b class="fc">&nbsp;        Partie partie = new Partie(List.of(joueur1, joueur2), Carte.TypeCarte.DAME);</b>
+<b class="fc">&nbsp;        assertNotNull(partie);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testDistributionEtPioche() {
+<b class="fc">&nbsp;        CarteAuto joueur1 = new CarteAuto(&quot;J1&quot;, new ArrayList&lt;&gt;(), false, false);</b>
+<b class="fc">&nbsp;        CarteAuto joueur2 = new CarteAuto(&quot;J2&quot;, new ArrayList&lt;&gt;(), false, false);</b>
+&nbsp;
+<b class="fc">&nbsp;        Partie partie = new Partie(List.of(joueur1, joueur2), Carte.TypeCarte.VALET);</b>
+&nbsp;
+<b class="fc">&nbsp;        int totalCartes = Carte.TypeCarte.values().length * 4;</b>
+<b class="fc">&nbsp;        int totalDistribuees = joueur1.getMain().size() + joueur2.getMain().size();</b>
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(&quot;Total cartes attendues : &quot; + totalCartes);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Total cartes distribuées : &quot; + totalDistribuees);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(totalCartes, totalDistribuees, &quot;Toutes les cartes doivent être distribuées.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testSuppressionDesJoueursMorts() {
+<b class="fc">&nbsp;        CarteAuto joueur1 = new CarteAuto(&quot;J1&quot;, new ArrayList&lt;&gt;(), false, false);</b>
+<b class="fc">&nbsp;        CarteAuto joueur2 = new CarteAuto(&quot;J2&quot;, new ArrayList&lt;&gt;(), false, false);</b>
+<b class="fc">&nbsp;        joueur1.perdreVie();</b>
+<b class="fc">&nbsp;        joueur1.perdreVie();</b>
+<b class="fc">&nbsp;        joueur1.perdreVie(); // Mort</b>
+&nbsp;
+<b class="fc">&nbsp;        assertFalse(joueur1.estVivant());</b>
+<b class="fc">&nbsp;        assertTrue(joueur2.estVivant());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-03 16:59</div>
+</div>
+</body>
+</html>

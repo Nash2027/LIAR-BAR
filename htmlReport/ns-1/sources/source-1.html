@@ -1,0 +1,245 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AffichageTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">liar.people.test</a>
+</div>
+
+<h1>Coverage Summary for Class: AffichageTest (liar.people.test)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AffichageTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (65/65)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package liar.people.test;
+&nbsp;
+&nbsp;import liar.utilitaire.Affichage;
+&nbsp;import liar.Joueur;
+&nbsp;import liar.people.JoueurBot;
+&nbsp;import liar.people.JoueurHumain;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.io.ByteArrayInputStream;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.io.PrintStream;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;public class AffichageTest {</b>
+&nbsp;
+&nbsp;    // Test afficherRegles (simple affichage console)
+&nbsp;    @Test
+&nbsp;    void testAfficherRegles() {
+<b class="fc">&nbsp;        ByteArrayOutputStream out = new ByteArrayOutputStream();</b>
+<b class="fc">&nbsp;        PrintStream originalOut = System.out;</b>
+<b class="fc">&nbsp;        System.setOut(new PrintStream(out));</b>
+&nbsp;
+<b class="fc">&nbsp;        Affichage.afficherRegles();</b>
+&nbsp;
+<b class="fc">&nbsp;        System.setOut(originalOut);</b>
+<b class="fc">&nbsp;        String output = out.toString();</b>
+&nbsp;
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;Bienvenue dans liar&quot;));</b>
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;Chaque joueur a 3 vies&quot;));</b>
+<b class="fc">&nbsp;        assertTrue(output.contains(&quot;Le dernier joueur avec des vies gagne&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Test choix invalide : non-int en entrée
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoixNonInt() {
+<b class="fc">&nbsp;        String input = &quot;abc\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.isEmpty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Test choix invalide : nombre hors bornes (exemple 99)
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoixInvalide() {
+<b class="fc">&nbsp;        String input = &quot;99\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.isEmpty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 1 : Humain vs Bot
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix1() {
+<b class="fc">&nbsp;        String input = &quot;1\nAlice\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertEquals(2, joueurs.size());</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.get(0) instanceof JoueurHumain);</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Alice&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.get(1) instanceof JoueurBot);</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Bot1&quot;, joueurs.get(1).getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 2 : 2 joueurs humains
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix2() {
+<b class="fc">&nbsp;        String input = &quot;2\nBob\nCharlie\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertEquals(2, joueurs.size());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Bob&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Charlie&quot;, joueurs.get(1).getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 3 : 3 joueurs humains
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix3() {
+<b class="fc">&nbsp;        String input = &quot;3\nDan\nEve\nFrank\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertEquals(3, joueurs.size());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Dan&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Eve&quot;, joueurs.get(1).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Frank&quot;, joueurs.get(2).getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 4 : 4 joueurs humains
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix4() {
+<b class="fc">&nbsp;        String input = &quot;4\nGina\nHarry\nIvy\nJack\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertEquals(4, joueurs.size());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Gina&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Harry&quot;, joueurs.get(1).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Ivy&quot;, joueurs.get(2).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Jack&quot;, joueurs.get(3).getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 5 : partie personnalisée, tests avec boucle do-while (totalJoueurs = 3, nbHumains = 2)
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix5() {
+&nbsp;        // Cas normal, entrée valide
+<b class="fc">&nbsp;        String input = &quot;5\n3\n2\nKate\nLiam\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(3, joueurs.size());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Kate&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Liam&quot;, joueurs.get(1).getNom());</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.get(2) instanceof JoueurBot);</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Bot1&quot;, joueurs.get(2).getNom());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 5 : tests des boucles do-while en forçant mauvaises entrées avant bonnes
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix5BoucleDoWhile() {
+&nbsp;        // totalJoueurs : entre 0 et 5 invalides, puis 2 valide
+&nbsp;        // nbHumains : entre -1 et 5 invalides, puis 1 valide
+<b class="fc">&nbsp;        String input = &quot;5\n0\n5\n2\n-1\n5\n1\nAlice\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+&nbsp;
+&nbsp;        // Devrait accepter totalJoueurs = 2 et nbHumains = 1
+<b class="fc">&nbsp;        assertEquals(2, joueurs.size());</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Alice&quot;, joueurs.get(0).getNom());</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.get(1) instanceof JoueurBot);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Choix 6 : quitter
+&nbsp;    @Test
+&nbsp;    void testSelectionnerJoueursChoix6() {
+<b class="fc">&nbsp;        String input = &quot;6\n&quot;;</b>
+<b class="fc">&nbsp;        Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));</b>
+<b class="fc">&nbsp;        List&lt;Joueur&gt; joueurs = Affichage.selectionnerJoueurs(scanner);</b>
+<b class="fc">&nbsp;        assertTrue(joueurs.isEmpty());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-03 16:59</div>
+</div>
+</body>
+</html>

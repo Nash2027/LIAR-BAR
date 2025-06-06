@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JoueurHumainTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">All in LIARS BAR Coverage Results</a> &gt; <a href="index.source.html" class="el_package">liar.people</a> &gt; <span class="el_source">JoueurHumainTest.java</span></div><h1>JoueurHumainTest.java</h1><pre class="source lang-java linenums">package liar.people;
+
+import liar.jeux.Carte;
+import org.junit.jupiter.api.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L12">public class JoueurHumainTest {</span>
+
+    private JoueurHumain joueur;
+    private InputStream systemInBackup;
+
+    @BeforeEach
+    void setUp() {
+<span class="fc" id="L19">        joueur = new JoueurHumain(&quot;Test&quot;);</span>
+<span class="fc" id="L20">        systemInBackup = System.in; // sauvegarder System.in</span>
+<span class="fc" id="L21">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="fc" id="L25">        System.setIn(systemInBackup); // restaurer System.in après chaque test</span>
+<span class="fc" id="L26">    }</span>
+
+    // Tests existants pour jouerCarteAuto
+
+    @Test
+    void testJouerCarteAuto_avecCarteCorrespondante() {
+<span class="fc" id="L32">        Carte.TypeCarte valeurDemandee = Carte.TypeCarte.DAME;</span>
+<span class="fc" id="L33">        joueur.main = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L34">        joueur.main.add(new Carte(Carte.TypeCarte.AS));</span>
+<span class="fc" id="L35">        joueur.main.add(new Carte(valeurDemandee)); // carte à jouer</span>
+<span class="fc" id="L36">        joueur.main.add(new Carte(Carte.TypeCarte.ROI));</span>
+
+<span class="fc" id="L38">        Carte carteJouee = joueur.jouerCarteAuto(valeurDemandee);</span>
+
+<span class="fc" id="L40">        assertEquals(valeurDemandee, carteJouee.getType());</span>
+<span class="fc" id="L41">        assertFalse(joueur.main.contains(carteJouee));</span>
+<span class="fc" id="L42">        assertEquals(2, joueur.main.size());</span>
+<span class="fc" id="L43">    }</span>
+
+    @Test
+    void testJouerCarteAuto_sansCarteCorrespondante() {
+<span class="fc" id="L47">        Carte.TypeCarte valeurDemandee = Carte.TypeCarte.DAME;</span>
+<span class="fc" id="L48">        joueur.main = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L49">        joueur.main.add(new Carte(Carte.TypeCarte.AS));</span>
+<span class="fc" id="L50">        joueur.main.add(new Carte(Carte.TypeCarte.ROI));</span>
+
+<span class="fc" id="L52">        Carte carteJouee = joueur.jouerCarteAuto(valeurDemandee);</span>
+
+        // doit jouer la première carte (AS)
+<span class="fc" id="L55">        assertEquals(Carte.TypeCarte.AS, carteJouee.getType());</span>
+<span class="fc" id="L56">        assertFalse(joueur.main.contains(carteJouee));</span>
+<span class="fc" id="L57">        assertEquals(1, joueur.main.size());</span>
+<span class="fc" id="L58">    }</span>
+
+    @Test
+    void testJouerCarteAuto_mainVide() {
+<span class="fc" id="L62">        joueur.main = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L64">        Carte carteJouee = joueur.jouerCarteAuto(Carte.TypeCarte.AS);</span>
+
+<span class="fc" id="L66">        assertNull(carteJouee);</span>
+<span class="fc" id="L67">        assertTrue(joueur.main.isEmpty());</span>
+<span class="fc" id="L68">    }</span>
+
+    // Nouveaux tests pour jouerCarte (avec simulation d'entrée utilisateur)
+
+    @Test
+    void testJouerCarte_avecEntreesInvalidesPuisValide() {
+<span class="fc" id="L74">        joueur.main = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L75">        joueur.main.add(new Carte(Carte.TypeCarte.AS));</span>
+<span class="fc" id="L76">        joueur.main.add(new Carte(Carte.TypeCarte.DAME));</span>
+<span class="fc" id="L77">        joueur.main.add(new Carte(Carte.TypeCarte.ROI));</span>
+
+        // Simuler plusieurs entrées : &quot;abc&quot; (non int), &quot;-1&quot; (hors borne), &quot;10&quot; (hors borne), puis &quot;1&quot; (valide)
+<span class="fc" id="L80">        String input = &quot;abc\n-1\n10\n1\n&quot;;</span>
+<span class="fc" id="L81">        ByteArrayInputStream testIn = new ByteArrayInputStream(input.getBytes());</span>
+<span class="fc" id="L82">        System.setIn(testIn);</span>
+
+<span class="fc" id="L84">        Carte carteJouee = joueur.jouerCarte(Carte.TypeCarte.AS);</span>
+
+        // L'indice valide est 1, donc la carte DAME doit être jouée
+<span class="fc" id="L87">        assertEquals(Carte.TypeCarte.DAME, carteJouee.getType());</span>
+<span class="fc" id="L88">        assertEquals(2, joueur.main.size());</span>
+<span class="fc" id="L89">        assertFalse(joueur.main.contains(carteJouee));</span>
+<span class="fc" id="L90">    }</span>
+
+    @Test
+    void testJouerCarte_avecEntreeValideDirecte() {
+<span class="fc" id="L94">        joueur.main = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L95">        joueur.main.add(new Carte(Carte.TypeCarte.AS));</span>
+<span class="fc" id="L96">        joueur.main.add(new Carte(Carte.TypeCarte.DAME));</span>
+<span class="fc" id="L97">        joueur.main.add(new Carte(Carte.TypeCarte.ROI));</span>
+
+<span class="fc" id="L99">        String input = &quot;0\n&quot;;</span>
+<span class="fc" id="L100">        ByteArrayInputStream testIn = new ByteArrayInputStream(input.getBytes());</span>
+<span class="fc" id="L101">        System.setIn(testIn);</span>
+
+<span class="fc" id="L103">        Carte carteJouee = joueur.jouerCarte(Carte.TypeCarte.AS);</span>
+
+        // indice 0 =&gt; AS joué
+<span class="fc" id="L106">        assertEquals(Carte.TypeCarte.AS, carteJouee.getType());</span>
+<span class="fc" id="L107">        assertEquals(2, joueur.main.size());</span>
+<span class="fc" id="L108">        assertFalse(joueur.main.contains(carteJouee));</span>
+<span class="fc" id="L109">    }</span>
+
+    @Test
+    void testJouerCarte_avecEntreeValideDerniereCarte() {
+<span class="fc" id="L113">        joueur.main = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L114">        joueur.main.add(new Carte(Carte.TypeCarte.AS));</span>
+<span class="fc" id="L115">        joueur.main.add(new Carte(Carte.TypeCarte.DAME));</span>
+<span class="fc" id="L116">        joueur.main.add(new Carte(Carte.TypeCarte.ROI));</span>
+
+<span class="fc" id="L118">        String input = &quot;2\n&quot;;</span>
+<span class="fc" id="L119">        ByteArrayInputStream testIn = new ByteArrayInputStream(input.getBytes());</span>
+<span class="fc" id="L120">        System.setIn(testIn);</span>
+
+<span class="fc" id="L122">        Carte carteJouee = joueur.jouerCarte(Carte.TypeCarte.AS);</span>
+
+        // indice 2 =&gt; ROI joué
+<span class="fc" id="L125">        assertEquals(Carte.TypeCarte.ROI, carteJouee.getType());</span>
+<span class="fc" id="L126">        assertEquals(2, joueur.main.size());</span>
+<span class="fc" id="L127">        assertFalse(joueur.main.contains(carteJouee));</span>
+<span class="fc" id="L128">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

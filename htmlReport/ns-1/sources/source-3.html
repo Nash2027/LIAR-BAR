@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JoueurBotTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">liar.people.test</a>
+</div>
+
+<h1>Coverage Summary for Class: JoueurBotTest (liar.people.test)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JoueurBotTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package liar.people.test;
+&nbsp;
+&nbsp;import liar.people.JoueurBot;
+&nbsp;import liar.jeux.Carte;
+&nbsp;import org.junit.jupiter.api.BeforeEach;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;public class JoueurBotTest {</b>
+&nbsp;
+&nbsp;    private JoueurBot bot;
+&nbsp;
+&nbsp;    @BeforeEach
+&nbsp;    void setUp() {
+<b class="fc">&nbsp;        bot = new JoueurBot(&quot;BotTest&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testJouerCarte_avecCarteCorrespondante() {
+&nbsp;        // Préparer la main avec une carte qui correspond à valeurDemandee
+<b class="fc">&nbsp;        Carte.TypeCarte valeurDemandee = Carte.TypeCarte.AS;</b>
+<b class="fc">&nbsp;        bot.main = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        bot.main.add(new Carte(Carte.TypeCarte.AS));</b>
+<b class="fc">&nbsp;        bot.main.add(new Carte(valeurDemandee)); // la bonne carte</b>
+<b class="fc">&nbsp;        bot.main.add(new Carte(Carte.TypeCarte.ROI));</b>
+&nbsp;
+<b class="fc">&nbsp;        Carte jouee = bot.jouerCarte(valeurDemandee);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(valeurDemandee, jouee.getType());</b>
+&nbsp;        // La main doit avoir perdu cette carte
+<b class="fc">&nbsp;        assertFalse(bot.main.contains(jouee));</b>
+&nbsp;        // La main contient toujours les 2 autres cartes
+<b class="fc">&nbsp;        assertEquals(2, bot.main.size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    void testJouerCarte_sansCarteCorrespondante() {
+&nbsp;        // Préparer la main sans carte qui correspond à valeurDemandee
+<b class="fc">&nbsp;        Carte.TypeCarte valeurDemandee = Carte.TypeCarte.DAME;</b>
+<b class="fc">&nbsp;        bot.main = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        bot.main.add(new Carte(Carte.TypeCarte.AS));</b>
+<b class="fc">&nbsp;        bot.main.add(new Carte(Carte.TypeCarte.ROI));</b>
+&nbsp;
+<b class="fc">&nbsp;        Carte jouee = bot.jouerCarte(valeurDemandee);</b>
+&nbsp;
+&nbsp;        // Doit jouer la première carte (bluff)
+<b class="fc">&nbsp;        assertEquals(Carte.TypeCarte.AS, jouee.getType());</b>
+<b class="fc">&nbsp;        assertFalse(bot.main.contains(jouee));</b>
+<b class="fc">&nbsp;        assertEquals(1, bot.main.size());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-03 16:59</div>
+</div>
+</body>
+</html>
