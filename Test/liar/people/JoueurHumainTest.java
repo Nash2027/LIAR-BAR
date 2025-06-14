@@ -9,24 +9,45 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests unitaires pour la classe {@link JoueurHumain}.
+ * <p>
+ * Cette classe teste les methodes {@code jouerCarteAuto(TypeCarte)} et {@code jouerCarte(TypeCarte)}.
+ * <ul>
+ *   <li>Tests de {@code jouerCarteAuto} avec ou sans carte correspondante, et main vide.</li>
+ *   <li>Tests de {@code jouerCarte} simulant des entrées utilisateur via {@code System.in},
+ *       y compris entrées invalides puis valide, et entrées valides directes.</li>
+ * </ul>
+ * <p>
+ * Les tests sur {@code jouerCarte} redirigent {@code System.in} pour simuler la saisie utilisateur,
+ * et restaurent le flux d'entrée original après chaque test.
+ */
 public class JoueurHumainTest {
 
     private JoueurHumain joueur;
     private InputStream systemInBackup;
 
+    /**
+     * Initialise un joueur humain avant chaque test et sauvegarde System.in.
+     */
     @BeforeEach
     void setUp() {
         joueur = new JoueurHumain("Test");
-        systemInBackup = System.in; // sauvegarder System.in
+        systemInBackup = System.in; // sauvegarde de System.in
     }
 
+    /**
+     * Restaure System.in après chaque test.
+     */
     @AfterEach
     void tearDown() {
-        System.setIn(systemInBackup); // restaurer System.in après chaque test
+        System.setIn(systemInBackup); // restauration de System.in
     }
 
-    // Tests existants pour jouerCarteAuto
-
+    /**
+     * Test que {@code jouerCarteAuto} joue une carte correspondant à la valeur demandée
+     * et la retire de la main.
+     */
     @Test
     void testJouerCarteAuto_avecCarteCorrespondante() {
         Carte.TypeCarte valeurDemandee = Carte.TypeCarte.DAME;
@@ -42,6 +63,9 @@ public class JoueurHumainTest {
         assertEquals(2, joueur.main.size());
     }
 
+    /**
+     * Test que {@code jouerCarteAuto} joue la première carte (bluff) si aucune carte correspondante.
+     */
     @Test
     void testJouerCarteAuto_sansCarteCorrespondante() {
         Carte.TypeCarte valeurDemandee = Carte.TypeCarte.DAME;
@@ -57,6 +81,9 @@ public class JoueurHumainTest {
         assertEquals(1, joueur.main.size());
     }
 
+    /**
+     * Test que {@code jouerCarteAuto} retourne null quand la main est vide.
+     */
     @Test
     void testJouerCarteAuto_mainVide() {
         joueur.main = new ArrayList<>();
@@ -67,8 +94,10 @@ public class JoueurHumainTest {
         assertTrue(joueur.main.isEmpty());
     }
 
-    // Nouveaux tests pour jouerCarte (avec simulation d'entrée utilisateur)
-
+    /**
+     * Test que {@code jouerCarte} gère plusieurs entrées invalides avant une entrée valide,
+     * et joue la carte sélectionnée par l'utilisateur.
+     */
     @Test
     void testJouerCarte_avecEntreesInvalidesPuisValide() {
         joueur.main = new ArrayList<>();
@@ -89,6 +118,9 @@ public class JoueurHumainTest {
         assertFalse(joueur.main.contains(carteJouee));
     }
 
+    /**
+     * Test que {@code jouerCarte} joue correctement la carte correspondant à l'indice saisi directement.
+     */
     @Test
     void testJouerCarte_avecEntreeValideDirecte() {
         joueur.main = new ArrayList<>();
@@ -108,6 +140,9 @@ public class JoueurHumainTest {
         assertFalse(joueur.main.contains(carteJouee));
     }
 
+    /**
+     * Test que {@code jouerCarte} joue la dernière carte de la main quand son indice est saisi.
+     */
     @Test
     void testJouerCarte_avecEntreeValideDerniereCarte() {
         joueur.main = new ArrayList<>();

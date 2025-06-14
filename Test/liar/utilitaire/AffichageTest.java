@@ -13,6 +13,26 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests unitaires pour la classe {@link Affichage}.
+ * <p>
+ * Cette classe couvre notamment :
+ * <ul>
+ *   <li>La création d'une instance {@link Affichage}.</li>
+ *   <li>La vérification de l'affichage des règles via la méthode {@code afficherRegles} (capture console).</li>
+ *   <li>Les tests de la méthode {@code selectionnerJoueurs(Scanner)} avec divers scénarios d'entrée utilisateur simulée :
+ *       <ul>
+ *         <li>Choix invalide non numérique.</li>
+ *         <li>Choix invalide hors bornes.</li>
+ *         <li>Choix valides 1 à 4 (différentes combinaisons humain/bot).</li>
+ *         <li>Choix 5 avec boucle do-while, tests avec mauvaises entrées puis bonnes.</li>
+ *         <li>Choix 6 pour quitter (retourne liste vide).</li>
+ *       </ul>
+ *   </li>
+ * </ul>
+ * <p>
+ * Les entrées utilisateurs sont simulées via redirection de {@code System.in} avec {@link ByteArrayInputStream}.
+ */
 public class AffichageTest {
 
     @Test
@@ -21,7 +41,9 @@ public class AffichageTest {
         assertNotNull(affichage, "L'instance Affichage doit être créée");
     }
 
-    // Test afficherRegles (simple affichage console)
+    /**
+     * Test l'affichage des règles de jeu en capturant la sortie console.
+     */
     @Test
     void testAfficherRegles() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -38,7 +60,10 @@ public class AffichageTest {
         assertTrue(output.contains("Le dernier joueur avec des vies gagne"));
     }
 
-    // Test choix invalide : non-int en entrée
+    /**
+     * Test de la méthode selectionnerJoueurs avec une entrée non entière (ex : "abc").
+     * Doit retourner une liste vide.
+     */
     @Test
     void testSelectionnerJoueursChoixNonInt() {
         String input = "abc\n";
@@ -47,7 +72,10 @@ public class AffichageTest {
         assertTrue(joueurs.isEmpty());
     }
 
-    // Test choix invalide : nombre hors bornes (exemple 99)
+    /**
+     * Test de selectionnerJoueurs avec un choix hors bornes (ex : 99).
+     * Doit retourner une liste vide.
+     */
     @Test
     void testSelectionnerJoueursChoixInvalide() {
         String input = "99\n";
@@ -56,7 +84,9 @@ public class AffichageTest {
         assertTrue(joueurs.isEmpty());
     }
 
-    // Choix 1 : Humain vs Bot
+    /**
+     * Test sélection du mode 1 : Humain vs Bot.
+     */
     @Test
     void testSelectionnerJoueursChoix1() {
         String input = "1\nAlice\n";
@@ -69,7 +99,9 @@ public class AffichageTest {
         assertEquals("Bot1", joueurs.get(1).getNom());
     }
 
-    // Choix 2 : 2 joueurs humains
+    /**
+     * Test sélection du mode 2 : 2 joueurs humains.
+     */
     @Test
     void testSelectionnerJoueursChoix2() {
         String input = "2\nBob\nCharlie\n";
@@ -80,7 +112,9 @@ public class AffichageTest {
         assertEquals("Charlie", joueurs.get(1).getNom());
     }
 
-    // Choix 3 : 3 joueurs humains
+    /**
+     * Test sélection du mode 3 : 3 joueurs humains.
+     */
     @Test
     void testSelectionnerJoueursChoix3() {
         String input = "3\nDan\nEve\nFrank\n";
@@ -92,7 +126,9 @@ public class AffichageTest {
         assertEquals("Frank", joueurs.get(2).getNom());
     }
 
-    // Choix 4 : 4 joueurs humains
+    /**
+     * Test sélection du mode 4 : 4 joueurs humains.
+     */
     @Test
     void testSelectionnerJoueursChoix4() {
         String input = "4\nGina\nHarry\nIvy\nJack\n";
@@ -105,10 +141,12 @@ public class AffichageTest {
         assertEquals("Jack", joueurs.get(3).getNom());
     }
 
-    // Choix 5 : partie personnalisée, tests avec boucle do-while (totalJoueurs = 3, nbHumains = 2)
+    /**
+     * Test sélection du mode 5 : partie personnalisée avec boucle do-while
+     * et nombre total de joueurs + nombre d'humains valides.
+     */
     @Test
     void testSelectionnerJoueursChoix5() {
-        // Cas normal, entrée valide
         String input = "5\n3\n2\nKate\nLiam\n";
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
         List<Joueur> joueurs = Affichage.selectionnerJoueurs(scanner);
@@ -120,22 +158,24 @@ public class AffichageTest {
         assertEquals("Bot1", joueurs.get(2).getNom());
     }
 
-    // Choix 5 : tests des boucles do-while en forçant mauvaises entrées avant bonnes
+    /**
+     * Test mode 5 avec entrées invalides dans les boucles do-while,
+     * puis entrées valides.
+     */
     @Test
     void testSelectionnerJoueursChoix5BoucleDoWhile() {
-        // totalJoueurs : entre 0 et 5 invalides, puis 2 valide
-        // nbHumains : entre -1 et 5 invalides, puis 1 valide
         String input = "5\n0\n5\n2\n-1\n5\n1\nAlice\n";
         Scanner scanner = new Scanner(new ByteArrayInputStream(input.getBytes()));
         List<Joueur> joueurs = Affichage.selectionnerJoueurs(scanner);
 
-        // Devrait accepter totalJoueurs = 2 et nbHumains = 1
         assertEquals(2, joueurs.size());
         assertEquals("Alice", joueurs.get(0).getNom());
         assertTrue(joueurs.get(1) instanceof JoueurBot);
     }
 
-    // Choix 6 : quitter
+    /**
+     * Test mode 6 : quitter (liste vide).
+     */
     @Test
     void testSelectionnerJoueursChoix6() {
         String input = "6\n";

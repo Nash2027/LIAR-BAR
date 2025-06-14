@@ -11,26 +11,33 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Classe utilitaire pour l'affichage et la gestion des interactions avec l'utilisateur dans le jeu Liar's Bar.
+ */
 public class Affichage {
 
+    /**
+     * Affiche les regles du jeu Liar's Bar.
+     */
     public static void afficherRegles() {
         System.out.println("Bienvenue dans Liar, le jeu du bluff !");
-        System.out.println("Règles :");
+        System.out.println("Regles :");
         System.out.println("- Chaque joueur a 3 vies.");
-        System.out.println(" Au début, une carte est demandée (exemple : '3' ou ici As/Roi/Dame/Valet).");
-        System.out.println(" À chaque tour, un joueur pose une carte face cachée en annonçant qu'elle correspond à la valeur demandée.");
-        System.out.println(" Il peut bluffer ou dire la vérité.");
+        System.out.println(" Au debut, une carte est demandee (exemple : '3' ou ici As/Roi/Dame/Valet).");
+        System.out.println(" A chaque tour, un joueur pose une carte face cachee en annoncant qu'elle correspond a la valeur demandee.");
+        System.out.println(" Il peut bluffer ou dire la verite.");
         System.out.println(" Les autres joueurs peuvent l'accuser de bluff.");
-        System.out.println(" Si le bluff est attrapé, le menteur perd une vie.");
+        System.out.println(" Si le bluff est attrape, le menteur perd une vie.");
         System.out.println(" Si l'accusation est fausse, l'accusateur perd une vie.");
         System.out.println(" Le dernier joueur avec des vies gagne.");
         System.out.println();
     }
 
     /**
-     * Sélectionne les joueurs selon les choix utilisateur
-     * @param scanner Scanner d'entrée
-     * @return liste des joueurs choisis ou vide si quitter / invalides
+     * Selectionne les joueurs selon les choix de l'utilisateur via le scanner.
+     *
+     * @param scanner Scanner d'entree
+     * @return liste des joueurs choisis ou liste vide si quitter ou entree invalide
      */
     public static List<Joueur> selectionnerJoueurs(Scanner scanner) {
         List<Joueur> joueurs = new ArrayList<>();
@@ -40,7 +47,7 @@ public class Affichage {
         System.out.println("2 - 2 Joueurs");
         System.out.println("3 - 3 Joueurs");
         System.out.println("4 - 4 Joueurs");
-        System.out.println("5 - Partie personnalisée");
+        System.out.println("5 - Partie personnalisee");
         System.out.println("6 - Quitter");
         System.out.print("Votre choix : ");
 
@@ -49,7 +56,7 @@ public class Affichage {
             choix = scanner.nextInt();
             scanner.nextLine();  // consommer la fin de ligne
         } catch (Exception e) {
-            System.out.println("Entrée invalide. Fin du programme.");
+            System.out.println("Entree invalide. Fin du programme.");
             return joueurs; // vide = fin
         }
 
@@ -89,14 +96,14 @@ public class Affichage {
             case 5:
                 int totalJoueurs;
                 do {
-                    System.out.print("Combien de joueurs au total ? (2 à 4) : ");
+                    System.out.print("Combien de joueurs au total ? (2 a 4) : ");
                     totalJoueurs = scanner.nextInt();
                     scanner.nextLine();
                 } while (totalJoueurs < 2 || totalJoueurs > 4);
 
                 int nbHumains;
                 do {
-                    System.out.print("Combien de joueurs humains ? (0 à " + totalJoueurs + ") : ");
+                    System.out.print("Combien de joueurs humains ? (0 a " + totalJoueurs + ") : ");
                     nbHumains = scanner.nextInt();
                     scanner.nextLine();
                 } while (nbHumains < 0 || nbHumains > totalJoueurs);
@@ -125,8 +132,9 @@ public class Affichage {
     }
 
     /**
-     * Lance le jeu complet, avec règles, sélection joueurs puis la partie.
-     * @param scanner Scanner d'entrée
+     * Lance le jeu complet, avec regles, selection des joueurs puis la partie.
+     *
+     * @param scanner Scanner d'entree
      */
     public static void lancerJeux(Scanner scanner) {
         afficherRegles();

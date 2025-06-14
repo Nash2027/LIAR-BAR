@@ -9,8 +9,20 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests unitaires pour la classe {@link Partie}.
+ * <p>
+ * Cette classe teste different scenarios de jeu, notamment la gestion des joueurs,
+ * la distribution des cartes, les accusations, la fin de partie et la pioche.
+ * <p>
+ * Une classe interne {@code CarteAuto} simule un joueur automatisé pour faciliter les tests.
+ */
 class PartieTest {
 
+    /**
+     * Classe interne simulant un joueur automatique pour les tests.
+     * Permet de definir une main predefinie, de simuler bluff, accusation, et gestion des vies.
+     */
     static class CarteAuto extends Joueur {
         private Queue<Carte> cartesAJouer;
         private boolean bluffer;
@@ -56,6 +68,9 @@ class PartieTest {
     private List<Joueur> joueurs;
     private Partie partie;
 
+    /**
+     * Initialise deux joueurs automatiques et une partie avant chaque test.
+     */
     @BeforeEach
     void setUp() {
         joueur1 = new CarteAuto("J1", new ArrayList<>(), false, false);
@@ -66,6 +81,9 @@ class PartieTest {
         partie = new Partie(joueurs, Carte.TypeCarte.DAME);
     }
 
+    /**
+     * Teste qu'une accusation juste fait perdre une vie au bluffeur.
+     */
     @Test
     void testPartieAvecAccusationJuste() {
         CarteAuto j1 = new CarteAuto("J1", List.of(new Carte(Carte.TypeCarte.AS)), true, false);
@@ -75,6 +93,9 @@ class PartieTest {
         assertEquals(2, j1.getVies());
     }
 
+    /**
+     * Teste qu'une fausse accusation fait perdre une vie a l'accusateur.
+     */
     @Test
     void testPartieAvecFausseAccusation() {
         CarteAuto j1 = new CarteAuto("J1", List.of(new Carte(Carte.TypeCarte.DAME)), false, false);
@@ -84,6 +105,9 @@ class PartieTest {
         assertEquals(2, j2.getVies());
     }
 
+    /**
+     * Teste la creation d'une partie sans accusation.
+     */
     @Test
     void testFinDePartieSansAccusation() {
         CarteAuto j1 = new CarteAuto("J1", List.of(new Carte(Carte.TypeCarte.AS)), false, false);
@@ -92,6 +116,9 @@ class PartieTest {
         assertNotNull(p);
     }
 
+    /**
+     * Teste que la distribution et la pioche sont correctes.
+     */
     @Test
     void testDistributionEtPioche() {
         CarteAuto j1 = new CarteAuto("J1", new ArrayList<>(), false, false);
@@ -102,6 +129,9 @@ class PartieTest {
         assertEquals(totalCartes, totalDistribuees);
     }
 
+    /**
+     * Teste la suppression d'un joueur quand il n'a plus de vies.
+     */
     @Test
     void testSuppressionDesJoueursMorts() {
         joueur1.perdreVie();
@@ -111,7 +141,7 @@ class PartieTest {
         assertTrue(joueur2.estVivant());
     }
 
-    // 🔽 NOUVEAUX TESTS
+    // --- Nouveaux tests ---
 
     @Test
     void testNombreJoueursVivants_initial() {
@@ -144,48 +174,46 @@ class PartieTest {
         assertEquals("J1", prochain.getNom()); // 2 % 2 == 0
     }
 
+    /**
+     * Teste la fin de partie quand tous les joueurs n'ont plus de cartes.
+     */
     @Test
     void testFinPartieMatchNul_siTousLesJoueursNontPlusDeCartes() {
-        // Arrange
         JoueurHumain j1 = new JoueurHumain("J1");
         JoueurHumain j2 = new JoueurHumain("J2");
-
-        // Les deux joueurs n'ont pas de cartes (main vide)
-        // On ne distribue rien, donc pas besoin d'enlever quoi que ce soit
         Partie partie = new Partie(Arrays.asList(j1, j2), Carte.TypeCarte.AS);
 
-        // On vide manuellement leur main si jamais des cartes sont données par le constructeur
         j1.getCartes().clear();
         j2.getCartes().clear();
 
-        // Mock de scanner avec uniquement des "false" (aucune accusation)
         String input = "false\nfalse\nfalse\nfalse\n";
         Scanner scanner = new Scanner(input);
 
-        // Act + Assert
-        assertDoesNotThrow(() -> {
-            partie.demarrer(scanner);
-        });
+        assertDoesNotThrow(() -> partie.demarrer(scanner));
     }
 
+    /**
+     * Teste que le constructeur initialise bien la pioche et distribue les cartes.
+     */
     @Test
     void testConstructeur_initialisePiocheEtDistribueCartes() {
         JoueurHumain j1 = new JoueurHumain("Alice");
         JoueurHumain j2 = new JoueurHumain("Bob");
         Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.AS);
 
-        // Chaque joueur doit avoir au moins une carte après distribution
         assertFalse(j1.getCartes().isEmpty());
         assertFalse(j2.getCartes().isEmpty());
     }
 
+    /**
+     * Teste la methode privée {@code creerPioche()} via reflection.
+     */
     @Test
     void testCreerPioche_remplitPioche() throws Exception {
         JoueurHumain j1 = new JoueurHumain("A");
         JoueurHumain j2 = new JoueurHumain("B");
         Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.AS);
 
-        // Invocation par réflexion de la méthode privée
         var method = Partie.class.getDeclaredMethod("creerPioche");
         method.setAccessible(true);
         method.invoke(p);
@@ -194,10 +222,12 @@ class PartieTest {
         field.setAccessible(true);
         Stack<?> pioche = (Stack<?>) field.get(p);
 
-        // La pioche doit contenir 52 cartes (13 valeurs * 4)
         assertEquals(Carte.TypeCarte.values().length * 4, pioche.size());
     }
 
+    /**
+     * Teste la methode privée {@code distribuerCartes()} via reflection.
+     */
     @Test
     void testDistribuerCartes_donneCartesAuxJoueurs() throws Exception {
         JoueurHumain j1 = new JoueurHumain("A");
@@ -212,6 +242,9 @@ class PartieTest {
         assertFalse(j2.getCartes().isEmpty());
     }
 
+    /**
+     * Teste que la methode privee {@code choisirValeurAleatoire()} ne retourne pas null.
+     */
     @Test
     void testChoisirValeurAleatoire_valeurNonNulle() throws Exception {
         Partie p = new Partie(joueurs, Carte.TypeCarte.AS);
@@ -222,34 +255,5 @@ class PartieTest {
 
         assertNotNull(val);
     }
-
-//    @Test
-//    void testDemarrer_accusationEtFaussesAccusations() {
-//        CarteAuto j1 = new CarteAuto("J1", List.of(new Carte(Carte.TypeCarte.DAME)), true, false);
-//        CarteAuto j2 = new CarteAuto("J2", List.of(new Carte(Carte.TypeCarte.DAME)), false, true);
-//
-//        Partie p = new Partie(List.of(j1, j2), Carte.TypeCarte.DAME);
-//
-//        // Génère un nombre suffisant de "false" pour ne pas manquer d'entrée
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < 40; i++) {
-//            sb.append("false\n");
-//            sb.append("false\n"); // un false par joueur à chaque tour
-//        }
-//        Scanner scanner = new Scanner(sb.toString());
-//
-//        p.demarrer(scanner);
-//
-//        assertEquals(2, j1.getVies()); // bluff attrapé
-//        assertEquals(3, j2.getVies()); // pas de perte
-//    }
-
-
-
-
-
-
-
-
 
 }
